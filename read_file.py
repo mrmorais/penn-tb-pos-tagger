@@ -1,4 +1,6 @@
-from postag.common.reader import PTBReader
+#!/usr/bin/python
 
-tags = PTBReader(path='./data/dev').read()
-print(tags)
+from postag.common.reader import PTBReader
+import sys
+
+ptb = PTBReader(path=sys.argv[1]).read()

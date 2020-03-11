@@ -1,4 +1,5 @@
 from enum import Enum
+import pickle
 
 class POSEntityType(Enum):
     CC      = 'coord-conj'
@@ -53,25 +54,51 @@ class POSEntity:
     value = None
     children = []
 
-    def __init__():
-        return
+    def __init__(self):
+        self.class_name = None
+        self.value = None
+        self.children = []
 
-    def append_child(self, entity):
-        return
+    def new_child(self):
+        child = POSEntity()
+        self.children.append(child)
+        return child
 
+    def __str__(self):
+        return "(type:%s;len_chldrn:%i;name:%s;value:%s)" % ("POSEntity", len(self.children), self.class_name, self.value)
+
+class POSInstance:
+
+    def __init__(self):
+        self.children = []
+
+    def new_child(self):
+        child = POSEntity()
+        self.children.append(child)
+        return child
+
+    def __str__(self):
+        return "(type:%s;len_chldrn:%i)" % ("POSInstance", len(self.children))
     
 
 class Treebank:
-    structure = []
 
     def __init__(self):
-        return
-    
-    def add_entity(self, entity_type):
-        return 
+        self.instances = []
 
-    # (NP (DT an) (NNP Oct.) (CD 19) (NN review) )
+    def load(self, path):
+        """
+        Loads a previously parsed ptb structure. In order to create a loadable 
+        file use the PTBReader class.
+        """
 
-    # @staticmethod
-    # def parse_string(value):
-    #     # (IN In)
+        with open(path, "rb") as dump_f:
+            ptbank_instances = pickle.load(dump_f)
+            self.instances = ptbank_instances
+            print('loaded ' + str(len(self.instances)))
+            del ptbank_instances
+
+    def new_instance(self):
+        inst = POSInstance()
+        self.instances.append(inst)
+        return inst
