@@ -1,6 +1,8 @@
 from enum import Enum
 import pickle
 
+from postag.utils.reader import PTBReader
+
 class POSEntityType(Enum):
     CC      = 'coord-conj'
     CD      = 'card-num'
@@ -82,23 +84,39 @@ class POSInstance:
     
 
 class Treebank:
-
     def __init__(self):
         self.instances = []
 
     def load(self, path):
         """
         Loads a previously parsed ptb structure. In order to create a loadable 
-        file use the PTBReader class.
+        file use the read() and then save() methods.
         """
+        ptbank_instances = pickle.load(open(path, "rb"))
+        self.instances = ptbank_instances
+        del ptbank_instances
 
-        with open(path, "rb") as dump_f:
-            ptbank_instances = pickle.load(dump_f)
-            self.instances = ptbank_instances
-            print('loaded ' + str(len(self.instances)))
-            del ptbank_instances
+    def save(self, path):
+        """
+        Saves the current structure of instances on a ptb file
+        """
+        pickle.dump(self.instances, open(path, "wb"))
+        return path
+    
+    @staticmethod
+    def read_file(path):
+        """
+        Reads and parses a raw ptb file.
+        """
+        return PTBReader(path).read()
+
 
     def new_instance(self):
         inst = POSInstance()
         self.instances.append(inst)
         return inst
+
+    
+    def __del__(self):
+        del self.instances
+        self.instances = []

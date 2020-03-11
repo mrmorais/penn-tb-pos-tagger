@@ -1,9 +1,9 @@
 from .tokenizer import TokenType
-from .treebank import Treebank
+from ..core import treebank
 
 def eval(tokens):
     level_stack = []
-    tbank = Treebank()
+    tbank = treebank.Treebank()
 
     for token in tokens:
         if len(level_stack) == 0 and token[0] == TokenType.OPEN_PR:

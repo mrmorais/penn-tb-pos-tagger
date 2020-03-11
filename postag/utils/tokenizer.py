@@ -17,9 +17,14 @@ class Tokenizer:
     # An Expression is:
     #   OPEN_PR ENT_NAME [EXPRESSION|ENT_VALUE] CLOSE_PR
 
-    buffer = ''
-    seek = SeekMode.BEGIN_EXP
-    tokens = []
+    def __init__(self):
+        self.tokens = []
+        self.seek = SeekMode.BEGIN_EXP
+        self.buffer = ''
+
+    def __del__(self):
+        del self.tokens
+        self.tokens = []
 
     def get_tokens(self):
         return self.tokens
