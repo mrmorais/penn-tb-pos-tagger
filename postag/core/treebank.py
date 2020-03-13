@@ -1,4 +1,3 @@
-from enum import Enum
 import pickle
 
 from postag.utils.reader import PTBReader
@@ -17,9 +16,6 @@ class POSEntity:
         self.children.append(child)
         return child
 
-    def __str__(self):
-        return self.string_format()
-
     def string_format(self, depth=0):
         """
         Human-readable structure representation
@@ -30,6 +26,12 @@ class POSEntity:
             return "("+ self.class_name +" "+ space_str.join(map(lambda x: x.string_format(depth+1), self.children)) +")"
         else:
             return "("+ self.class_name +" "+ self.value +")"
+    
+    def __str__(self):
+        return self.string_format()
+    
+    def __getitem__(self, item):
+        return self.children[item]
 
 class POSInstance:
 
@@ -45,9 +47,6 @@ class POSInstance:
         self.children.append(child)
         return child
 
-    def __str__(self):
-        return self.string_format()
-
     def string_format(self, depth=0):
         """
         Human-readable structure representation
@@ -55,7 +54,12 @@ class POSInstance:
 
         space_str = "\n" + depth*"  "
         return "("+ space_str.join(map(lambda x: x.string_format(depth+1),self.children)) +")"
+
+    def __str__(self):
+        return self.string_format()
     
+    def __getitem__(self, item):
+        return self.children[item]
 
 class Treebank:
     def __init__(self):
@@ -93,6 +97,8 @@ class Treebank:
         self.instances.append(inst)
         return inst
 
+    def __getitem__(self, item_idx):
+        return self.instances[item_idx]
     
     def __del__(self):
         del self.instances
