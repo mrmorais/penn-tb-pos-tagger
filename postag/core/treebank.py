@@ -27,6 +27,14 @@ class POSEntity:
         else:
             return "("+ self.class_name +" "+ self.value +")"
     
+    def get_nodes(self):
+        if self.value != None:
+            yield self
+        else:
+            for entity in self.children:
+                for node in entity.get_nodes():
+                    yield node
+
     def __str__(self):
         return self.string_format()
     
@@ -54,6 +62,15 @@ class POSInstance:
 
         space_str = "\n" + depth*"  "
         return "("+ space_str.join(map(lambda x: x.string_format(depth+1),self.children)) +")"
+
+    def get_nodes(self):
+        nodes = []
+
+        for entity in self.children:
+            for node in entity.get_nodes():
+                nodes.append(node)
+
+        return nodes
 
     def __str__(self):
         return self.string_format()
@@ -96,6 +113,20 @@ class Treebank:
         inst = POSInstance()
         self.instances.append(inst)
         return inst
+
+    def get_nodes(self, group_by_inst=False):
+        """
+        Selects only the nodes at the tree
+        """
+        nodes = []
+
+        for instance in self.instances:
+            if group_by_inst:
+                nodes.append(instance.get_nodes())
+            else:
+                nodes.extend(instance.get_nodes())
+
+        return nodes
 
     def __getitem__(self, item_idx):
         return self.instances[item_idx]
